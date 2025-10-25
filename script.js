@@ -175,13 +175,11 @@ style.innerHTML = `
 document.head.appendChild(style);
 
 // Vérifier au chargement de la page si un objet est forcé
+// (Ne plus générer automatiquement, attendre le clic sur "Découvrir")
 window.addEventListener('DOMContentLoaded', () => {
   const forcedIndex = localStorage.getItem('forcedObjectIndex');
   
   if (forcedIndex !== null) {
-    // Déclencher automatiquement la génération si un objet est forcé
-    setTimeout(() => {
-      genererObjet();
-    }, 500); // Petit délai pour que l'utilisateur voie la page se charger
+    console.log('🎯 Un objet est choisi. Cliquez sur "Découvrir" pour le révéler.');
   }
 });
