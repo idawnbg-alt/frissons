@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎭 Panneau de Contrôle Secret</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎭</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    
+    * { box-sizing: border-box; }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+      background-attachment: fixed;
+      color: #fff;
+      padding: 20px;
+      margin: 0;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    h1 {
+      text-align: center;
+      font-size: clamp(2em, 5vw, 3em);
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #a0a0a0;
+      margin-bottom: 40px;
+      font-size: 1.1em;
+    }
+    
+    .status {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .status-label {
+      font-size: 0.9em;
+      color: #a0a0a0;
+      margin-bottom: 5px;
+    }
+    
+    .status-value {
+      font-size: 1.3em;
+      font-weight: 600;
+      color: #667eea;
+    }
+    
+    .objects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    
+    .object-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .object-card:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #667eea;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+    
+    .object-card.selected {
+      background: rgba(102, 126, 234, 0.2);
+      border-color: #667eea;
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+    }
+    
+    .object-number {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(102, 126, 234, 0.3);
+      color: #fff;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9em;
+    }
+    
+    .object-title {
+      font-size: 1.1em;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+    
+    .object-subtitle {
+      font-size: 0.9em;
+      color: #a0a0a0;
+      font-style: italic;
+    }
+    
+    .actions {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    button {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 15px 35px;
+      font-size: 1.1em;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    button.secondary {
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+    }
+    
+    button.clear {
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+    }
+    
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .link {
+      text-align: center;
+      margin-top: 30px;
+    }
+    
+    .link a {
+      color: #667eea;
+      text-decoration: none;
+      font-size: 1.1em;
+      transition: all 0.3s ease;
+    }
+    
+    .link a:hover {
+      color: #764ba2;
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 480px) {
+      .objects-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .actions {
+        flex-direction: column;
+      }
+      
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎭 Panneau de Contrôle Secret</h1>
+    <p class="subtitle">Contrôlez secrètement le prochain objet qui apparaîtra</p>
+    
+    <div class="status">
+      <div class="status-label">Objet forcé actuellement :</div>
+      <div class="status-value" id="currentStatus">Aucun (mode aléatoire)</div>
+    </div>
+    
+    <div class="objects-grid" id="objectsGrid"></div>
+    
+    <div class="actions">
+      <button onclick="forceObject()" id="forceBtn" disabled>Forcer cet objet</button>
+      <button class="clear" onclick="clearForce()">Retirer le forçage</button>
+      <button class="secondary" onclick="openMainPage()">Ouvrir la page principale</button>
+    </div>
+    
+    <div class="link">
+      <a href="index.html" target="_blank">🔗 Ouvrir index.html dans un nouvel onglet</a>
+    </div>
+  </div>
+
+  <script>
+    const objets = [
+      {
+        objet: "Un plumeau de plumes d'autruche noires 🪶",
+        soustitre: "pour tracer des chemins de frissons le long de ta peau nue"
+      },
+      {
+        objet: "Un masque en satin rouge sang avec ruban à nouer 😈",
+        soustitre: "pour voir sans être vu"
+      },
+      {
+        objet: "Une huile chauffante à la vanille bourbon 🔥",
+        soustitre: "qui embrase la peau au premier souffle"
+      },
+      {
+        objet: "Des menottes en velours rose avec clé en cœur 💞",
+        soustitre: "qui disparaît toujours au bon moment"
+      },
+      {
+        objet: "Un dé coquin à 6 faces 🎲",
+        soustitre: "embrasse, mords, lèche, caresse, souffle, dévore"
+      },
+      {
+        objet: "Un bandeau en dentelle 🖤",
+        soustitre: "pour te guider dans le noir vers des sensations inédites"
+      },
+      {
+        objet: "Une bougie de massage à l'ambre et vanille 🕯️",
+        soustitre: "qui fond en huile chaude... versée goutte à goutte"
+      },
+      {
+        objet: "Un vibromasseur en forme de rouge à lèvres Chanel 💄",
+        soustitre: "glamour même dans l'intimité"
+      },
+      {
+        objet: "Une pluie de pétales de rose en soie rouge 🌹",
+        soustitre: "à semer sur les draps blancs... pour jouer à cache-cache"
+      },
+      {
+        objet: "Un foulard en satin noir 🎀",
+        soustitre: "pour lier doucement les poignets et découvrir le plaisir de l'abandon"
+      },
+      {
+        objet: "Un jeu de 52 cartes illustrées 🃏",
+        soustitre: "une position différente à chaque tirage, une nuit pour toutes les essayer"
+      },
+      {
+        objet: "Un élixir d'amour aux phéromones 🌬️",
+        soustitre: "jasmin et musc... quelques gouttes derrière l'oreille changent tout"
+      },
+      {
+        objet: "Une plume de paon iridescente 🦚",
+        soustitre: "pour dessiner des arabesques invisibles qui rendent fou"
+      },
+      {
+        objet: "Un coussin vibrant en forme de cœur rouge ❤️",
+        soustitre: "qui pulse au rythme de tes désirs les plus secrets"
+      },
+      {
+        objet: "Un miroir de poche en argent gravé 👄",
+        soustitre: "« Regarde-toi jouir »... parce que le plaisir mérite d'être admiré"
+      },
+      {
+        objet: "Un collier ras-du-cou en velours bordeaux 💍",
+        soustitre: "avec un anneau en O... la soumission peut être si douce"
+      },
+      {
+        objet: "Une plume de cygne blanche 🦢",
+        soustitre: "trempée dans l'huile essentielle de rose pour effleurer l'interdit"
+      },
+      {
+        objet: "Des dés lumineux avec défis sensuels 🎲✨",
+        soustitre: "laisse le hasard décider"
+      },
+      {
+        objet: "Un kit de peinture corporelle au chocolat comestible 🎨",
+        soustitre: "ton corps devient une toile à lécher"
+      },
+      {
+        objet: "Un anneau vibrant ajustable 💍⚡",
+        soustitre: "qui transforme chaque caresse en symphonie électrisante"
+      },
+      {
+        objet: "Un livre « 365 jeux érotiques » 📖🔥",
+        soustitre: "un défi par jour, une année entière de découvertes"
+      },
+      {
+        objet: "Une cravache en cuir souple avec franges 🖤",
+        soustitre: "pour jouer à dominée-dominant"
+      },
+      {
+        objet: "Un harnais en dentelle et satin 🎀",
+        soustitre: "qui sublime le corps tout en révélant juste ce qu'il faut"
+      },
+      {
+        objet: "Un parfum d'ambiance aux notes de figue 🌙",
+        soustitre: "et ambre sensuel... ton intérieur devient un boudoir"
+      },
+      {
+        objet: "Une chaîne en argent avec mini menottes ⛓️",
+        soustitre: "bijou le jour, accessoire la nuit"
+      }
+    ];
+
+    let selectedIndex = null;
+
+    function renderObjects() {
+      const grid = document.getElementById('objectsGrid');
+      grid.innerHTML = '';
+      
+      objets.forEach((obj, index) => {
+        const card = document.createElement('div');
+        card.className = 'object-card';
+        if (selectedIndex === index) {
+          card.classList.add('selected');
+        }
+        
+        card.innerHTML = `
+          <div class="object-number">${index + 1}</div>
+          <div class="object-title">${obj.objet}</div>
+          <div class="object-subtitle">${obj.soustitre}</div>
+        `;
+        
+        card.onclick = () => selectObject(index);
+        grid.appendChild(card);
+      });
+    }
+
+    function selectObject(index) {
+      selectedIndex = index;
+      renderObjects();
+      document.getElementById('forceBtn').disabled = false;
+    }
+
+    function forceObject() {
+      if (selectedIndex === null) return;
+      
+      // Sauvegarder dans localStorage
+      localStorage.setItem('forcedObjectIndex', selectedIndex.toString());
+      localStorage.setItem('forcedObjectTimestamp', Date.now().toString());
+      
+      updateStatus();
+      alert(`✅ Objet ${selectedIndex + 1} forcé !\n\n"${objets[selectedIndex].objet}"\n\nOuvrez la page principale pour voir le résultat.`);
+    }
+
+    function clearForce() {
+      // Supprimer du localStorage
+      localStorage.removeItem('forcedObjectIndex');
+      localStorage.removeItem('forcedObjectTimestamp');
+      
+      selectedIndex = null;
+      renderObjects();
+      updateStatus();
+      document.getElementById('forceBtn').disabled = true;
+      alert('✅ Forçage retiré. La génération redevient aléatoire.');
+    }
+
+    function updateStatus() {
+      const statusEl = document.getElementById('currentStatus');
+      const forcedIndex = localStorage.getItem('forcedObjectIndex');
+      
+      if (forcedIndex !== null) {
+        const index = parseInt(forcedIndex);
+        statusEl.textContent = `Objet ${index + 1} : "${objets[index].objet}"`;
+        statusEl.style.color = '#f093fb';
+      } else {
+        statusEl.textContent = 'Aucun (mode aléatoire)';
+        statusEl.style.color = '#667eea';
+      }
+    }
+
+    function openMainPage() {
+      window.open('/', '_blank');
+    }
+
+    // Initialisation
+    renderObjects();
+    updateStatus();
+    
+    // Écouter les changements de localStorage (synchronisation entre onglets)
+    window.addEventListener('storage', updateStatus);
+  </script>
+</body>
+</html>
