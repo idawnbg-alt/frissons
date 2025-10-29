@@ -2,6 +2,10 @@
   "rewrites": [
     {
       "source": "/control",
+      "destination": "/control-remote.html"
+    },
+    {
+      "source": "/local",
       "destination": "/control.html"
     }
   ]
