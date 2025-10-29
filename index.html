@@ -469,13 +469,9 @@
           const result = await response.json();
           console.log('🌐 Harnais forcé via API distante:', result);
           
-          // Message de confirmation discret
-          const successMsg = document.createElement('div');
-          successMsg.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(240, 147, 251, 0.95); color: white; padding: 15px 25px; border-radius: 25px; font-size: 1em; z-index: 10000; font-weight: 600;';
-          successMsg.textContent = '🎀 Harnais forcé à distance !';
-          document.body.appendChild(successMsg);
+          // Mettre à jour l'indicateur de statut immédiatement
+          updateApiStatus();
           
-          setTimeout(() => successMsg.remove(), 2000);
           return;
         }
       } catch (error) {
@@ -486,14 +482,6 @@
       localStorage.setItem('forcedObjectIndex', '22');
       localStorage.setItem('forcedObjectTimestamp', Date.now().toString());
       console.log('💾 Harnais forcé localement');
-      
-      // Message de confirmation local
-      const localMsg = document.createElement('div');
-      localMsg.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(102, 126, 234, 0.95); color: white; padding: 15px 25px; border-radius: 25px; font-size: 1em; z-index: 10000; font-weight: 600;';
-      localMsg.textContent = '🎀 Harnais forcé localement !';
-      document.body.appendChild(localMsg);
-      
-      setTimeout(() => localMsg.remove(), 2000);
     }
 
     // Animation CSS pour les confettis
