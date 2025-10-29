@@ -507,36 +507,6 @@
       return indicator;
     }
 
-    // Mise à jour du statut API
-    async function updateApiStatus() {
-      const indicator = document.getElementById('api-status');
-      if (!indicator) return;
-      
-      try {
-        const response = await fetch('/api/get-forced-object');
-        
-        if (response.ok) {
-          const result = await response.json();
-          
-          if (result.hasForcedObject) {
-            indicator.innerHTML = '🌐 Objet forcé distant disponible';
-            indicator.style.background = 'rgba(240, 147, 251, 0.2)';
-            indicator.style.borderColor = '#f093fb';
-          } else {
-            indicator.innerHTML = '🌐 API distante disponible';
-            indicator.style.background = 'rgba(0, 200, 81, 0.2)';
-            indicator.style.borderColor = '#00c851';
-          }
-        } else {
-          throw new Error('API non disponible');
-        }
-      } catch (error) {
-        indicator.innerHTML = '💾 Mode local uniquement';
-        indicator.style.background = 'rgba(255, 165, 0, 0.2)';
-        indicator.style.borderColor = '#ffa500';
-      }
-    }
-
     // Démarrer le polling des objets forcés distants
     function startPolling() {
       // Vérifier immédiatement
