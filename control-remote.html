@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎮 Contrôle Remote - Objet Coquin</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+      background-attachment: fixed;
+      color: #fff;
+      padding: 15px;
+      margin: 0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    h1 {
+      font-size: clamp(1.5em, 5vw, 2.2em);
+      margin-bottom: 8px;
+      background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+    }
+    .subtitle {
+      color: #a0a0a0;
+      font-size: 1em;
+      margin-bottom: 0;
+    }
+    .share-url {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .share-url h3 {
+      margin: 0 0 10px 0;
+      color: #667eea;
+      font-size: 1.1em;
+    }
+    .url-display {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 12px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 0.9em;
+      word-break: break-all;
+      margin-bottom: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .copy-btn {
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9em;
+      transition: all 0.3s ease;
+    }
+    .copy-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+    }
+    .status {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .status-label {
+      font-size: 0.9em;
+      color: #a0a0a0;
+      margin-bottom: 5px;
+    }
+    .status-value {
+      font-size: 1.1em;
+      font-weight: 600;
+      color: #667eea;
+    }
+    .objects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .object-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .object-card:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #667eea;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+    }
+    .object-card.selected {
+      background: rgba(102, 126, 234, 0.2);
+      border-color: #667eea;
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+    }
+    .object-number {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(102, 126, 234, 0.3);
+      color: #fff;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.8em;
+    }
+    .object-title {
+      font-size: 0.95em;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .object-subtitle {
+      font-size: 0.8em;
+      color: #a0a0a0;
+      font-style: italic;
+      line-height: 1.3;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    button {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1em;
+      font-weight: 600;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      flex: 1;
+      min-width: 150px;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .force-btn {
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+    }
+    .force-btn:hover {
+      box-shadow: 0 8px 25px rgba(240, 147, 251, 0.4);
+    }
+    .clear-btn {
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+    }
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    .success {
+      animation: successPulse 0.6s ease;
+    }
+    @keyframes successPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    .main-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .main-link a {
+      color: #667eea;
+      text-decoration: none;
+      font-size: 1em;
+      transition: all 0.3s ease;
+    }
+    .main-link a:hover {
+      color: #764ba2;
+      text-decoration: underline;
+    }
+    @media (max-width: 640px) {
+      .objects-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .actions {
+        flex-direction: column;
+      }
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎮 Contrôle Remote</h1>
+      <p class="subtitle">Forcer un objet depuis un autre appareil</p>
+    </div>
+
+    <div class="share-url">
+      <h3>📱 Page principale à partager :</h3>
+      <div class="url-display" id="mainUrl"></div>
+      <button class="copy-btn" onclick="copyMainUrl()">Copier l'URL</button>
+    </div>
+
+    <div class="status">
+      <div class="status-label">Objet forcé actuellement :</div>
+      <div class="status-value" id="currentStatus">Chargement...</div>
+      <div class="status-value" id="timer" style="display: none;"></div>
+    </div>
+
+    <div class="objects-grid" id="objectsGrid"></div>
+
+    <div class="actions">
+      <button class="force-btn" onclick="forceObject()" id="forceBtn" disabled>🎯 Forcer cet objet</button>
+      <button class="clear-btn" onclick="clearForcedObject()">🗑️ Effacer</button>
+    </div>
+
+    <div class="main-link">
+      <a href="index.html" target="_blank">🔗 Ouvrir la page principale</a>
+    </div>
+  </div>
+
+  <script>
+    // Base de données des objets
+    const objets = [
+      { objet: "Un plumeau de plumes d'autruche noires 🪶", soustitre: "pour tracer des chemins de frissons le long de ta peau nue" },
+      { objet: "Un masque en satin rouge sang avec ruban à nouer 😈", soustitre: "pour voir sans être vu" },
+      { objet: "Une huile chauffante à la vanille bourbon 🔥", soustitre: "qui embrase la peau au premier souffle" },
+      { objet: "Des menottes en velours rose avec clé en cœur 💞", soustitre: "qui disparaît toujours au bon moment" },
+      { objet: "Un dé coquin à 6 faces 🎲", soustitre: "embrasse, mords, lèche, caresse, souffle, dévore" },
+      { objet: "Un bandeau en dentelle 🖤", soustitre: "pour te guider dans le noir vers des sensations inédites" },
+      { objet: "Une bougie de massage à l'ambre et vanille 🕯️", soustitre: "qui fond en huile chaude... versée goutte à goutte" },
+      { objet: "Un vibromasseur en forme de rouge à lèvres Chanel 💄", soustitre: "glamour même dans l'intimité" },
+      { objet: "Une pluie de pétales de rose en soie rouge 🌹", soustitre: "à semer sur les draps blancs... pour jouer à cache-cache" },
+      { objet: "Un foulard en satin noir 🎀", soustitre: "pour lier doucement les poignets et découvrir le plaisir de l'abandon" },
+      { objet: "Un jeu de 52 cartes illustrées 🃏", soustitre: "une position différente à chaque tirage, une nuit pour toutes les essayer" },
+      { objet: "Un élixir d'amour aux phéromones 🌬️", soustitre: "jasmin et musc... quelques gouttes derrière l'oreille changent tout" },
+      { objet: "Une plume de paon iridescente 🦚", soustitre: "pour dessiner des arabesques invisibles qui rendent fou" },
+      { objet: "Un coussin vibrant en forme de cœur rouge ❤️", soustitre: "qui pulse au rythme de tes désirs les plus secrets" },
+      { objet: "Un miroir de poche en argent gravé 👄", soustitre: "« Regarde-toi jouir »... parce que le plaisir mérite d'être admiré" },
+      { objet: "Un collier ras-du-cou en velours bordeaux 💍", soustitre: "avec un anneau en O... la soumission peut être si douce" },
+      { objet: "Une plume de cygne blanche 🦢", soustitre: "trempée dans l'huile essentielle de rose pour effleurer l'interdit" },
+      { objet: "Des dés lumineux avec défis sensuels 🎲✨", soustitre: "laisse le hasard décider" },
+      { objet: "Un kit de peinture corporelle au chocolat comestible 🎨", soustitre: "ton corps devient une toile à lécher" },
+      { objet: "Un anneau vibrant ajustable 💍⚡", soustitre: "qui transforme chaque caresse en symphonie électrisante" },
+      { objet: "Un livre « 365 jeux érotiques » 📖🔥", soustitre: "un défi par jour, une année entière de découvertes" },
+      { objet: "Une cravache en cuir souple avec franges 🖤", soustitre: "pour jouer à dominée-dominant" },
+      { objet: "Un harnais en dentelle et satin 🎀", soustitre: "qui sublime le corps tout en révélant juste ce qu'il faut" },
+      { objet: "Un parfum d'ambiance aux notes de figue 🌙", soustitre: "et ambre sensuel... ton intérieur devient un boudoir" },
+      { objet: "Une chaîne en argent avec mini menottes ⛓️", soustitre: "bijou le jour, accessoire la nuit" }
+    ];
+
+    let selectedIndex = null;
+    let currentForcedObject = null;
+    let timerInterval = null;
+
+    // Détecter l'URL de base pour la page principale
+    function getMainPageUrl() {
+      const baseUrl = window.location.origin + window.location.pathname.replace('control-remote.html', '');
+      return baseUrl + 'index.html';
+    }
+
+    function displayMainUrl() {
+      const mainUrlElement = document.getElementById('mainUrl');
+      const mainUrl = getMainPageUrl();
+      mainUrlElement.textContent = mainUrl;
+    }
+
+    async function copyMainUrl() {
+      try {
+        await navigator.clipboard.writeText(getMainPageUrl());
+        const btn = document.querySelector('.copy-btn');
+        const originalText = btn.textContent;
+        btn.textContent = '✅ Copié !';
+        btn.style.background = 'linear-gradient(135deg, #00c851, #007e33)';
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.background = 'linear-gradient(135deg, #4facfe, #00f2fe)';
+        }, 2000);
+      } catch (err) {
+        alert('Échec de la copie. Copiez manuellement l\'URL affichée.');
+      }
+    }
+
+    function renderObjects() {
+      const grid = document.getElementById('objectsGrid');
+      grid.innerHTML = '';
+      
+      objets.forEach((obj, index) => {
+        const card = document.createElement('div');
+        card.className = 'object-card';
+        if (selectedIndex === index) {
+          card.classList.add('selected');
+        }
+        
+        card.innerHTML = `
+          <div class="object-number">${index + 1}</div>
+          <div class="object-title">${obj.objet}</div>
+          <div class="object-subtitle">${obj.soustitre}</div>
+        `;
+        
+        card.onclick = () => selectObject(index);
+        grid.appendChild(card);
+      });
+    }
+
+    function selectObject(index) {
+      selectedIndex = index;
+      renderObjects();
+      document.getElementById('forceBtn').disabled = false;
+    }
+
+    async function forceObject() {
+      if (selectedIndex === null) return;
+      
+      const forceBtn = document.getElementById('forceBtn');
+      forceBtn.disabled = true;
+      forceBtn.textContent = 'Forçage...';
+      forceBtn.classList.add('loading');
+
+      try {
+        const response = await fetch('/api/force-object', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            objectIndex: selectedIndex,
+            duration: 120000 // 2 minutes
+          })
+        });
+
+        const result = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(result.error || 'Erreur lors du forçage');
+        }
+
+        // Animations de succès
+        forceBtn.textContent = '✅ Forcé !';
+        forceBtn.style.background = 'linear-gradient(135deg, #00c851, #007e33)';
+        forceBtn.classList.add('success');
+        
+        setTimeout(() => {
+          forceBtn.textContent = '🎯 Forcer cet objet';
+          forceBtn.disabled = false;
+          forceBtn.classList.remove('loading', 'success');
+          forceBtn.style.background = 'linear-gradient(135deg, #f093fb, #f5576c)';
+        }, 2000);
+
+        currentForcedObject = {
+          objectIndex: result.objectIndex,
+          expiresAt: result.expiresAt
+        };
+
+        updateStatus();
+        startTimer();
+        
+        console.log('🎯 Objet forcé avec succès:', result);
+
+      } catch (error) {
+        console.error('Erreur lors du forçage:', error);
+        forceBtn.textContent = '❌ Erreur';
+        forceBtn.style.background = 'linear-gradient(135deg, #ff4444, #cc0000)';
+        
+        setTimeout(() => {
+          forceBtn.textContent = '🎯 Forcer cet objet';
+          forceBtn.disabled = false;
+          forceBtn.classList.remove('loading');
+          forceBtn.style.background = 'linear-gradient(135deg, #f093fb, #f5576c)';
+        }, 3000);
+        
+        alert('Erreur: ' + error.message);
+      }
+    }
+
+    async function clearForcedObject() {
+      try {
+        const response = await fetch('/api/clear-forced-object', {
+          method: 'DELETE'
+        });
+
+        if (!response.ok) {
+          const result = await response.json();
+          throw new Error(result.error || 'Erreur lors de l\'effacement');
+        }
+
+        currentForcedObject = null;
+        stopTimer();
+        updateStatus();
+        
+        alert('✅ Objet forcé effacé');
+        console.log('🗑️ Objet forcé effacé');
+
+      } catch (error) {
+        console.error('Erreur lors de l\'effacement:', error);
+        alert('Erreur: ' + error.message);
+      }
+    }
+
+    async function checkForcedObject() {
+      try {
+        const response = await fetch('/api/get-forced-object');
+        const result = await response.json();
+        
+        if (result.hasForcedObject) {
+          currentForcedObject = {
+            objectIndex: result.objectIndex,
+            expiresAt: result.expiresAt
+          };
+        } else {
+          currentForcedObject = null;
+          stopTimer();
+        }
+        
+        updateStatus();
+        if (currentForcedObject) {
+          startTimer();
+        }
+        
+      } catch (error) {
+        console.error('Erreur lors de la vérification:', error);
+      }
+    }
+
+    function updateStatus() {
+      const statusEl = document.getElementById('currentStatus');
+      
+      if (currentForcedObject) {
+        const obj = objets[currentForcedObject.objectIndex];
+        statusEl.textContent = `#${currentForcedObject.objectIndex + 1} : "${obj.objet}"`;
+        statusEl.style.color = '#f093fb';
+      } else {
+        statusEl.textContent = 'Aucun objet forcé (mode aléatoire)';
+        statusEl.style.color = '#667eea';
+      }
+    }
+
+    function startTimer() {
+      if (timerInterval) return;
+      
+      const timerEl = document.getElementById('timer');
+      timerEl.style.display = 'block';
+      
+      timerInterval = setInterval(() => {
+        if (!currentForcedObject) {
+          stopTimer();
+          return;
+        }
+        
+        const now = Date.now();
+        const timeRemaining = currentForcedObject.expiresAt - now;
+        
+        if (timeRemaining <= 0) {
+          timerEl.textContent = '⏰ Objet forcé expiré';
+          stopTimer();
+          checkForcedObject(); // Vérifier à nouveau
+          return;
+        }
+        
+        const seconds = Math.floor(timeRemaining / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        
+        timerEl.textContent = `⏰ Expire dans ${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      document.getElementById('timer').style.display = 'none';
+    }
+
+    // Initialisation
+    displayMainUrl();
+    renderObjects();
+    checkForcedObject();
+    
+    // Vérifier périodiquement l'objet forcé
+    setInterval(checkForcedObject, 10000); // Toutes les 10 secondes
+    
+    // Écouter les changements de focus pour actualiser
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        checkForcedObject();
+      }
+    });
+  </script>
+</body>
+</html>

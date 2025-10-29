@@ -218,11 +218,13 @@
     </div>
     
     <div class="link">
-      <a href="index.html" target="_blank">🔗 Ouvrir index.html dans un nouvel onglet</a>
+      <a href="index.html" target="_blank">🔗 Ouvrir index.html dans un nouvel onglet</a><br><br>
+      <a href="control-remote.html" target="_blank">📱 Contrôle remote (depuis un autre appareil)</a>
     </div>
   </div>
 
   <script>
+    // Base de données centralisée des objets (identique à index.html)
     const objets = [
       {
         objet: "Un plumeau de plumes d'autruche noires 🪶",
@@ -394,7 +396,7 @@
     }
 
     function openMainPage() {
-      window.location.href = '/';
+      window.open('index.html', '_blank');
     }
 
     // Initialisation
