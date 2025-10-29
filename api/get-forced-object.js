@@ -45,7 +45,9 @@ export default async function handler(req, res) {
 
     const data = await kvResponse.text();
     
-    if (!data) {
+    console.log('📦 Données brutes KV:', data);
+    
+    if (!data || data === 'null') {
       // Aucun objet forcé trouvé
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.status(200).json({
@@ -56,7 +58,29 @@ export default async function handler(req, res) {
     }
 
     // Parser les données JSON
-    const forcedObjectData = JSON.parse(data);
+    let forcedObjectData;
+    try {
+      // Les données peuvent être double-encodées
+      forcedObjectData = JSON.parse(data);
+      console.log('📦 Première analyse:', forcedObjectData);
+      
+      // Si c'est une string, parser à nouveau
+      if (typeof forcedObjectData === 'string') {
+        forcedObjectData = JSON.parse(forcedObjectData);
+        console.log('📦 Deuxième analyse:', forcedObjectData);
+      }
+      
+      // Vérifier la structure des données
+      if (typeof forcedObjectData.result !== 'undefined') {
+        forcedObjectData = JSON.parse(forcedObjectData.result);
+        console.log('📦 Données depuis result:', forcedObjectData);
+      }
+    } catch (parseError) {
+      console.error('Erreur de parsing:', parseError);
+      throw new Error(`Impossible de parser les données: ${parseError.message}`);
+    }
+    
+    console.log('📦 Données finales:', forcedObjectData);
     
     // Vérifier si l'objet a expiré
     const now = Date.now();
