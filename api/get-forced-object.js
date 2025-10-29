@@ -47,7 +47,7 @@ export default async function handler(req, res) {
     
     console.log('📦 Données brutes KV:', data);
     
-    if (!data || data === 'null') {
+    if (!data || data === 'null' || data === '""' || data === '') {
       // Aucun objet forcé trouvé
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.status(200).json({
@@ -75,9 +75,25 @@ export default async function handler(req, res) {
         forcedObjectData = JSON.parse(forcedObjectData.result);
         console.log('📦 Données depuis result:', forcedObjectData);
       }
+      
+      // Vérifier que l'objet est valide
+      if (!forcedObjectData || typeof forcedObjectData.objectIndex === 'undefined' || typeof forcedObjectData.expiresAt === 'undefined') {
+        console.log('⚠️ Données invalides ou incomplètes');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.status(200).json({
+          hasForcedObject: false,
+          message: 'Données invalides'
+        });
+        return;
+      }
     } catch (parseError) {
       console.error('Erreur de parsing:', parseError);
-      throw new Error(`Impossible de parser les données: ${parseError.message}`);
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.status(200).json({
+        hasForcedObject: false,
+        message: 'Erreur de parsing des données'
+      });
+      return;
     }
     
     console.log('📦 Données finales:', forcedObjectData);
