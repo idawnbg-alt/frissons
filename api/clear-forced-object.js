@@ -29,12 +29,11 @@ export default async function handler(req, res) {
     const kvUrl = process.env.upDB_KV_REST_API_URL;
     const kvToken = process.env.upDB_KV_REST_API_TOKEN;
 
-    // Supprimer depuis Vercel KV
+    // Supprimer depuis Vercel KV en utilisant l'API REST
     const kvResponse = await fetch(`${kvUrl}/del/forcedObject`, {
-      method: 'POST',
+      method: 'GET',
       headers: {
-        'Authorization': `Bearer ${kvToken}`,
-        'Content-Type': 'application/json'
+        'Authorization': `Bearer ${kvToken}`
       }
     });
 

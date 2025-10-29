@@ -91,10 +91,9 @@ export default async function handler(req, res) {
     if (now >= forcedObjectData.expiresAt) {
       // Nettoyer l'objet expiré
       await fetch(`${kvUrl}/del/forcedObject`, {
-        method: 'POST',
+        method: 'GET',
         headers: {
-          'Authorization': `Bearer ${kvToken}`,
-          'Content-Type': 'application/json'
+          'Authorization': `Bearer ${kvToken}`
         }
       });
 

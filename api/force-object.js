@@ -45,18 +45,12 @@ export default async function handler(req, res) {
       expiresAt: Date.now() + duration
     };
 
-    // Stocker dans Vercel KV
-    const kvResponse = await fetch(`${kvUrl}/set/forcedObject`, {
-      method: 'POST',
+    // Stocker dans Vercel KV en utilisant l'API REST
+    const kvResponse = await fetch(`${kvUrl}/set/forcedObject/${JSON.stringify(forcedObjectData)}?ex=${Math.floor(duration / 1000)}`, {
+      method: 'GET',
       headers: {
-        'Authorization': `Bearer ${kvToken}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        value: JSON.stringify(forcedObjectData),
-        // Auto-expire après la durée spécifiée
-        ex: Math.floor(duration / 1000)
-      })
+        'Authorization': `Bearer ${kvToken}`
+      }
     });
 
     if (!kvResponse.ok) {
