@@ -17,17 +17,17 @@ export default async function handler(req, res) {
 
   try {
     // Vérifier que Vercel KV est disponible
-    if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
+    if (!process.env.upDB_KV_REST_API_URL || !process.env.upDB_KV_REST_API_TOKEN) {
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.status(500).json({ 
         error: 'Vercel KV non configuré',
-        message: 'Veuillez configurer KV_REST_API_URL et KV_REST_API_TOKEN dans les variables d\'environnement'
+        message: 'Veuillez configurer upDB_KV_REST_API_URL et upDB_KV_REST_API_TOKEN dans les variables d\'environnement'
       });
       return;
     }
 
-    const kvUrl = process.env.KV_REST_API_URL;
-    const kvToken = process.env.KV_REST_API_TOKEN;
+    const kvUrl = process.env.upDB_KV_REST_API_URL;
+    const kvToken = process.env.upDB_KV_REST_API_TOKEN;
 
     // Supprimer depuis Vercel KV
     const kvResponse = await fetch(`${kvUrl}/del/forcedObject`, {
