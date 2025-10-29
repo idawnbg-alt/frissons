@@ -319,12 +319,6 @@
       const objetDiv = document.getElementById("objet");
       const soustitreDiv = document.getElementById("soustitre");
       
-      // Ajouter un indicateur de chargement
-      const loadingMsg = document.createElement('div');
-      loadingMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.8); color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.9em; z-index: 10000;';
-      loadingMsg.textContent = '🔄 Vérification des objets forcés...';
-      document.body.appendChild(loadingMsg);
-      
       let finalIndex;
       let isRemoteForced = false;
       
@@ -369,17 +363,6 @@
         }
       }
       
-      // Mise à jour du statut API
-      if (isRemoteForced) {
-        isUsingRemoteAPI = true;
-        loadingMsg.textContent = '🎯 Objet forcé distant détecté !';
-        loadingMsg.style.background = 'rgba(240, 147, 251, 0.9)';
-      } else {
-        isUsingRemoteAPI = false;
-        loadingMsg.textContent = '🎲 Génération locale aléatoire';
-        loadingMsg.style.background = 'rgba(102, 126, 234, 0.9)';
-      }
-      
       // Animation de génération
       setTimeout(() => {
         soustitreDiv.innerHTML = "";
@@ -401,17 +384,8 @@
               objetDiv.classList.remove('generating');
               isGenerating = false;
               
-              // Message de succès
-              const successMsg = document.createElement('div');
-              successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: rgba(0,200,81,0.9); color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.9em; z-index: 10000;';
-              successMsg.textContent = isRemoteForced ? '✨ Objet forcé distant révélé !' : '✨ Objet généré !';
-              document.body.appendChild(successMsg);
-              
-              // Nettoyer les messages
-              setTimeout(() => {
-                loadingMsg.remove();
-                successMsg.remove();
-              }, 3000);
+              // Mettre à jour l'indicateur de statut
+              updateApiStatus();
               
               setTimeout(() => {
                 confettiEffect();
@@ -496,16 +470,6 @@
     `;
     document.head.appendChild(style);
 
-    // Indicateur de statut API
-    function addApiStatusIndicator() {
-      const indicator = document.createElement('div');
-      indicator.id = 'api-status';
-      indicator.style.cssText = 'position: fixed; bottom: 20px; left: 20px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 8px 12px; border-radius: 15px; font-size: 0.8em; color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); z-index: 1000;';
-      indicator.innerHTML = '🔄 Vérification API...';
-      document.body.appendChild(indicator);
-      
-      return indicator;
-    }
 
     // Démarrer le polling des objets forcés distants
     function startPolling() {
