@@ -416,42 +416,19 @@
       }
     }
 
-    // Fonction pour forcer le harnais (index 22) - support API distante + fallback local
+    // Fonction pour forcer le harnais (index 22) - LOCAL UNIQUEMENT
     async function forceHarnais() {
-      console.log('🎀 Tentative de forçage du harnais (index 22)...');
+      console.log('🎀 Tentative de forçage du harnais (index 22) en local...');
       
       // Feedback visuel immédiat
       const emoji = document.querySelector('.emoji');
       emoji.style.animation = 'pulse 0.3s ease';
       setTimeout(() => emoji.style.animation = 'pulse 2s ease-in-out infinite', 300);
       
-      try {
-        // Essayer d'abord l'API distante
-        const response = await fetch('/api/force-object', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            objectIndex: 22, // Harnais
-            duration: 30000 // 30 secondes
-          })
-        });
-        
-        if (response.ok) {
-          const result = await response.json();
-          console.log('🌐 Harnais forcé via API distante:', result);
-          
-          return;
-        }
-      } catch (error) {
-        console.log('⚠️ API distante indisponible, utilisation du système local');
-      }
-      
-      // Fallback : système local
+      // Forçage local uniquement
       localStorage.setItem('forcedObjectIndex', '22');
       localStorage.setItem('forcedObjectTimestamp', Date.now().toString());
-      console.log('💾 Harnais forcé localement');
+      console.log('💾 Harnais forcé localement (localStorage)');
     }
 
     // Animation CSS pour les confettis
