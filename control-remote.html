@@ -247,6 +247,9 @@
       <div class="status-label">Objet forcé actuellement :</div>
       <div class="status-value" id="currentStatus">Chargement...</div>
       <div class="status-value" id="timer" style="display: none;"></div>
+      <div id="remoteNote" style="display: none; margin-top: 10px; padding: 10px; background: rgba(240, 147, 251, 0.2); border: 1px solid #f093fb; border-radius: 8px; font-size: 0.9em; color: #f093fb;">
+        🌐 Objet forcé distant disponible
+      </div>
     </div>
 
     <div class="objects-grid" id="objectsGrid"></div>
@@ -466,14 +469,17 @@
 
     function updateStatus() {
       const statusEl = document.getElementById('currentStatus');
+      const remoteNote = document.getElementById('remoteNote');
       
       if (currentForcedObject) {
         const obj = objets[currentForcedObject.objectIndex];
         statusEl.textContent = `#${currentForcedObject.objectIndex + 1} : "${obj.objet}"`;
         statusEl.style.color = '#f093fb';
+        remoteNote.style.display = 'block';
       } else {
         statusEl.textContent = 'Aucun objet forcé (mode aléatoire)';
         statusEl.style.color = '#667eea';
+        remoteNote.style.display = 'none';
       }
     }
 
