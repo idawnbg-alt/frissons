@@ -31,10 +31,9 @@ export default async function handler(req, res) {
 
     // Récupérer depuis Vercel KV
     const kvResponse = await fetch(`${kvUrl}/get/forcedObject`, {
-      method: 'POST',
+      method: 'GET',
       headers: {
-        'Authorization': `Bearer ${kvToken}`,
-        'Content-Type': 'application/json'
+        'Authorization': `Bearer ${kvToken}`
       }
     });
 
@@ -43,11 +42,12 @@ export default async function handler(req, res) {
       throw new Error(`Erreur KV: ${errorText}`);
     }
 
-    const data = await kvResponse.text();
+    const data = await kvResponse.json(); // Utiliser json() au lieu de text()
     
-    console.log('📦 Données brutes KV:', data);
+    console.log('📦 Données brutes KV (JSON):', data);
     
-    if (!data || data === 'null' || data === '""' || data === '') {
+    // Vérifier si la réponse contient un résultat
+    if (!data || !data.result) {
       // Aucun objet forcé trouvé
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.status(200).json({
@@ -57,24 +57,12 @@ export default async function handler(req, res) {
       return;
     }
 
-    // Parser les données JSON
+    // Parser les données JSON du result
     let forcedObjectData;
     try {
-      // Les données peuvent être double-encodées
-      forcedObjectData = JSON.parse(data);
-      console.log('📦 Première analyse:', forcedObjectData);
-      
-      // Si c'est une string, parser à nouveau
-      if (typeof forcedObjectData === 'string') {
-        forcedObjectData = JSON.parse(forcedObjectData);
-        console.log('📦 Deuxième analyse:', forcedObjectData);
-      }
-      
-      // Vérifier la structure des données
-      if (typeof forcedObjectData.result !== 'undefined') {
-        forcedObjectData = JSON.parse(forcedObjectData.result);
-        console.log('📦 Données depuis result:', forcedObjectData);
-      }
+      // Le result contient les données JSON stringifiées
+      forcedObjectData = JSON.parse(data.result);
+      console.log('📦 Données parsées:', forcedObjectData);
       
       // Vérifier que l'objet est valide
       if (!forcedObjectData || typeof forcedObjectData.objectIndex === 'undefined' || typeof forcedObjectData.expiresAt === 'undefined') {
