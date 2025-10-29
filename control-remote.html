@@ -39,44 +39,6 @@
       font-size: 1em;
       margin-bottom: 0;
     }
-    .share-url {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 15px;
-      padding: 20px;
-      margin-bottom: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    .share-url h3 {
-      margin: 0 0 10px 0;
-      color: #667eea;
-      font-size: 1.1em;
-    }
-    .url-display {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 12px;
-      border-radius: 8px;
-      font-family: monospace;
-      font-size: 0.9em;
-      word-break: break-all;
-      margin-bottom: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .copy-btn {
-      background: linear-gradient(135deg, #4facfe, #00f2fe);
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.9em;
-      transition: all 0.3s ease;
-    }
-    .copy-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
-    }
     .status {
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
@@ -237,12 +199,6 @@
       <p class="subtitle">Forcer un objet depuis un autre appareil</p>
     </div>
 
-    <div class="share-url">
-      <h3>📱 Page principale à partager :</h3>
-      <div class="url-display" id="mainUrl"></div>
-      <button class="copy-btn" onclick="copyMainUrl()">Copier l'URL</button>
-    </div>
-
     <div class="status">
       <div class="status-label">Objet forcé actuellement :</div>
       <div class="status-value" id="currentStatus">Chargement...</div>
@@ -297,34 +253,6 @@
     let selectedIndex = null;
     let currentForcedObject = null;
     let timerInterval = null;
-
-    // Détecter l'URL de base pour la page principale
-    function getMainPageUrl() {
-      const baseUrl = window.location.origin + window.location.pathname.replace('control-remote.html', '');
-      return baseUrl + 'index.html';
-    }
-
-    function displayMainUrl() {
-      const mainUrlElement = document.getElementById('mainUrl');
-      const mainUrl = getMainPageUrl();
-      mainUrlElement.textContent = mainUrl;
-    }
-
-    async function copyMainUrl() {
-      try {
-        await navigator.clipboard.writeText(getMainPageUrl());
-        const btn = document.querySelector('.copy-btn');
-        const originalText = btn.textContent;
-        btn.textContent = '✅ Copié !';
-        btn.style.background = 'linear-gradient(135deg, #00c851, #007e33)';
-        setTimeout(() => {
-          btn.textContent = originalText;
-          btn.style.background = 'linear-gradient(135deg, #4facfe, #00f2fe)';
-        }, 2000);
-      } catch (err) {
-        alert('Échec de la copie. Copiez manuellement l\'URL affichée.');
-      }
-    }
 
     function renderObjects() {
       const grid = document.getElementById('objectsGrid');
@@ -447,11 +375,14 @@
         const response = await fetch('/api/get-forced-object');
         const result = await response.json();
         
+        console.log('🔍 Vérification objet forcé:', result);
+        
         if (result.hasForcedObject) {
           currentForcedObject = {
             objectIndex: result.objectIndex,
             expiresAt: result.expiresAt
           };
+          console.log('✅ Objet forcé trouvé:', currentForcedObject);
         } else {
           currentForcedObject = null;
           stopTimer();
@@ -473,9 +404,16 @@
       
       if (currentForcedObject) {
         const obj = objets[currentForcedObject.objectIndex];
-        statusEl.textContent = `#${currentForcedObject.objectIndex + 1} : "${obj.objet}"`;
-        statusEl.style.color = '#f093fb';
-        remoteNote.style.display = 'block';
+        if (obj) {
+          statusEl.textContent = `#${currentForcedObject.objectIndex + 1} : "${obj.objet}"`;
+          statusEl.style.color = '#f093fb';
+          remoteNote.style.display = 'block';
+        } else {
+          console.error(`Objet non trouvé à l'index ${currentForcedObject.objectIndex}`);
+          statusEl.textContent = `Erreur: Objet #${currentForcedObject.objectIndex + 1} non trouvé`;
+          statusEl.style.color = '#ff4444';
+          remoteNote.style.display = 'none';
+        }
       } else {
         statusEl.textContent = 'Aucun objet forcé (mode aléatoire)';
         statusEl.style.color = '#667eea';
@@ -579,7 +517,6 @@
     }
 
     // Initialisation
-    displayMainUrl();
     renderObjects();
     checkForcedObject();
     
