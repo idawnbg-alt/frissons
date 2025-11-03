@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/control",
-      "destination": "/control-remote.html"
+      "destination": "/control.html"
     },
     {
-      "source": "/local",
-      "destination": "/control.html"
+      "source": "/qr",
+      "destination": "/qr.html"
     }
   ]
 }

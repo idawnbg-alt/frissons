@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QR Code</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💋</text></svg>">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 25%, #4a1942 50%, #6b0f3d 75%, #8b0a50 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .qr-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+    
+    .qr-container img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+    
+    @media (max-width: 480px) {
+      .qr-container {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="qr-container">
+    <img src="qr_code_frissons_online.png" alt="QR Code">
+  </div>
+</body>
+</html>
